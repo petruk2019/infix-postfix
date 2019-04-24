@@ -1,66 +1,113 @@
 #include <iostream>
-#define MAX_STACK_SIZE 10
 using namespace std;
 
-struct Element {
-int data, atas;
-Element *next;
+struct Element{
+ string Q[1000];
+ int top;
 };
 
-class MyStack {
-	private:
-		Element deret;
-		Element *head = NULL;
-
-	public:
-		void max(){
-		deret.atas = -1;
-		}
-		bool kosong(){
-		if(deret.atas == -1){
+class myStack {
+ private:
+  Element tumpuk;
+  Element *head = NULL;
+  
+ public:
+   void init(){
+  tumpuk.top = 0;
+ }
+ char Top(){
+		return tumpuk.y[tumpuk.top];
+	}
+	bool kosong(){
+		if(tumpuk.top <= -1)
 			return 1;
-		}else{
-			return 0;
-		}
-			}
+		else
+			return 0;	
+	}
+	bool isOperand(char pus){
+	int x = (int)pus;
+	if(x >= 48 && x <= 57 || x >= 65 && x <= 90 || x >= 97 && x <= 122)
+		return true;
+	else
+		return false;
+	}
+	bool isOperator(char pus){
+	int x = (int)pus;
+	if(x == 94 || x >= 42 && x <= 43 || x == 45 || x == 47)
+		return true;
+	else
+		return false;
+	}
+	int getlevel(char pus){
+	if(pus == '^')
+		return 3;
+	else if(pus == '*' || pus == '/')
+		return 2;
+	else if(pus == '+' || pus == '-')
+		return 1;
+	else if(pus == '(' || pus == ')')
+		return 0;
+	else
+		return -1;
+	}
+	bool precedence(char pus1, char pus2){
+	int c1 = getlevel(pus1);
+	int c2 = getlevel(pus2);
 
-	bool penuh(){
-		if(deret.atas == MAX_STACK_SIZE-1){
-			return 1;
-		} else{
-			return 0;
-		}
+	if(c1 <= c2)
+		return true;
+	else
+		return false;
+	}
+	void push(char puh){
+		tumpuk.Q[tumpuk.top] = puh;
+		tumpuk.top++;
+	}
+void pop(){
+		tumpuk.top--;
 	}
 	
-	void push(int a){
-		if (!penuh()){
-			
-			Element *drt = new Element;
-			drt->data = a;
-			drt->next = NULL;
-			if(kosong()){
-				head = drt;
-				head->next = NULL;
-			} else{
-				drt->next = head;
-				head = drt;
-				
+	string kondisi(string pus){
+		init();
+		int i=0;
+		string P = "";
+		while(pus[i] != '\0'){
+			if(isOperand(pus[i])){
+				P += pus[i];
+			} else if(pus[i] == '(' ){
+				push(pus[i]);
+			} else if(pus[i] == ')' ){
+				while(!kosong() && Top() == '(' ){
+					P = P + " " + Top();
+					pop();
 				}
-				deret.atas++;
+				pop();
+			} else if (isOperator(pus[i])){
+				if(kosong() || Top() == '('){
+					push(pus[i]);
+				}	
+			} else {
+				while(!kosong() && Top() != '(' && precedence(pus[i], Top()) ){
+					P = P + " " + Top();
+					pop();
+				}
+				push(pus[i]);
+				}
+				if(isOperator(pus[i]))
+					P += " ";
+					i++;
 			}
-		else {
-			cout<<"\nStack Penuh!!\n"<<endl;
-			}
+			while(!kosong()){
+			P = P + " " + Top();
+			pop();
+			} return P; 
 		}
-	Element pop(){
-		Element item;
-			if (kosong()){
-				cout<<"\nStack Kosong\n";
-			}
-			else{
-				Element *drt = new Element;
-				drt = head;
-				head = head->next;
-				delete drt;
-				deret.atas--;
-			}
+};
+int main() {
+	myStack s;
+	string b;
+	cout<<"masukkan infix = ";
+	cin>>b;
+	string A = s.kondisi(telor);
+	cout<<endl<<"infix = "<<b<<endl<<"Posfix = "<<A<<endl;
+}
